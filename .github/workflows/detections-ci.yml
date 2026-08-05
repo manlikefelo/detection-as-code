@@ -1,0 +1,87 @@
+name: detections-ci
+
+# Detection content is treated like software: every change to a rule is gated by
+# the same pipeline. A pull request that adds a malformed rule, or a rule whose
+# test samples don't behave, fails here and cannot be merged.
+
+on:
+  pull_request:
+    paths:
+      - "rules/**"
+      - "tests/**"
+      - "tools/**"
+      - ".github/workflows/detections-ci.yml"
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: lint -> test -> convert
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install toolchain
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # STAGE 1 - lint: every rule must parse against the Sigma spec and obey
+      # the repo's house rules (required fields, ATT&CK tag, a samples file).
+      - name: Lint rules (Sigma spec + house rules)
+        run: python tools/lint_rules.py
+
+      # STAGE 2 - test: TP samples must fire, benign samples must not, and a rule
+      # with no true-positive samples fails the suite.
+      - name: Run detection tests
+        run: python -m pytest -v
+
+      # STAGE 3 - convert: compile rules to Lucene queries + a Wazuh ruleset.
+      - name: Convert rules to SIEM backends
+        run: python tools/convert_rules.py
+
+      - name: Upload converted rules artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-detections
+          path: build/converted/
+          if-no-files-found: error
+
+  deploy:
+    name: deploy converted ruleset (main only)
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install toolchain
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build deployable ruleset
+        run: python tools/convert_rules.py
+
+      # "Deploy" here publishes the compiled ruleset as a release-style artifact.
+      # In a live environment this same artifact would be pushed to the Wazuh
+      # manager (see docs/ci-design.md, "From artifact to live SIEM").
+      - name: Publish deploy artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wazuh-ruleset-main
+          path: build/converted/wazuh_local_rules.xml
+          if-no-files-found: error

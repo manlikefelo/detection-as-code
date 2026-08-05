@@ -1,0 +1,38 @@
+title: DCSync - Directory Replication Rights Exercised by a Non-DC
+id: a2c4e6f8-7b9d-4c1e-8a2f-4c3f7e9a0033
+status: stable
+description: |
+    Detects use of the directory-replication extended rights
+    DS-Replication-Get-Changes (1131f6aa-...) and DS-Replication-Get-Changes-All
+    (1131f6ad-...) via Event 4662. Tools such as impacket-secretsdump / mimikatz
+    "lsadump::dcsync" impersonate a Domain Controller to replicate account secrets,
+    including the krbtgt hash. Only real DCs (and sanctioned sync services like Entra
+    Connect) should ever exercise these rights.
+references:
+    - https://attack.mitre.org/techniques/T1003/006/
+    - https://learn.microsoft.com/windows/security/threat-protection/auditing/event-4662
+author: Felix Githure
+date: 2026-07-31
+tags:
+    - attack.credential-access
+    - attack.t1003.006
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4662
+        Properties|contains:
+            - '1131f6aa-9c07-11d1-f79f-00c04fc2dcd2'   # DS-Replication-Get-Changes
+            - '1131f6ad-9c07-11d1-f79f-00c04fc2dcd2'   # DS-Replication-Get-Changes-All
+    filter_dc_accounts:
+        # Domain Controller computer accounts replicate legitimately; exclude them.
+        SubjectUserName|endswith: '$'
+    filter_system:
+        SubjectUserSid: 'S-1-5-18'   # LOCAL SYSTEM on a DC
+    condition: selection and not 1 of filter_*
+falsepositives:
+    - Legitimate DC-to-DC replication (filtered by excluding machine accounts / SYSTEM).
+    - Azure AD Connect / Entra Connect or other sanctioned sync service accounts -
+      whitelist by their specific account name.
+level: critical

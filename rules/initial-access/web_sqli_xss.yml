@@ -1,0 +1,28 @@
+title: Web Attack - SQL Injection / XSS Pattern in HTTP Request
+id: d5f7b9c1-0e2a-4f4b-9c5d-6e5b9f1c0055
+status: experimental
+description: |
+    Detects SQL-injection and cross-site-scripting patterns in web-server access logs.
+    Written for an Apache access log shipped from the DVWA lab victim. Because real
+    attack traffic arrives URL-encoded, the patterns match both raw and encoded forms
+    (e.g. UNION SELECT and UNION%20SELECT, ' and %27).
+references:
+    - https://attack.mitre.org/techniques/T1190/
+    - https://owasp.org/Top10/A03_2021-Injection/
+author: Felix Githure
+date: 2026-07-31
+tags:
+    - attack.initial-access
+    - attack.t1190
+logsource:
+    category: webserver
+detection:
+    sqli:
+        c-uri|re: '(?i)union(\s|%20|\+)+select|information_schema|\bor\b(\s|%20|\+)+1=1|sqlmap'
+    xss:
+        c-uri|re: '(?i)<script|<iframe|javascript:|onerror=|alert\('
+    condition: sqli or xss
+falsepositives:
+    - Security scanners and WAF test traffic.
+    - Legitimate requests that happen to contain trigger substrings (rare on a URI).
+level: high

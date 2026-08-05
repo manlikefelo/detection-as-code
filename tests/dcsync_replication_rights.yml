@@ -1,0 +1,36 @@
+# Samples for: DCSync - Directory Replication Rights Exercised by a Non-DC
+# Rule fires on 4662 + a replication GUID in Properties, excluding machine accounts
+# (SubjectUserName ends in $) and LOCAL SYSTEM (S-1-5-18).
+true_positives:
+  - name: secretsdump replicates krbtgt from a user account (DCSync)
+    event:
+      EventID: 4662
+      Properties: "Object Access ... {1131f6aa-9c07-11d1-f79f-00c04fc2dcd2} ..."
+      SubjectUserName: "helpdesk"
+      SubjectUserSid: "S-1-5-21-1004"
+  - name: Get-Changes-All right exercised by a user
+    event:
+      EventID: 4662
+      Properties: "... 1131f6ad-9c07-11d1-f79f-00c04fc2dcd2 ..."
+      SubjectUserName: "helpdesk"
+      SubjectUserSid: "S-1-5-21-1004"
+
+benign:
+  - name: Legitimate DC-to-DC replication (machine account ends in $)
+    event:
+      EventID: 4662
+      Properties: "... 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2 ..."
+      SubjectUserName: "DC02$"
+      SubjectUserSid: "S-1-5-21-2001"
+  - name: LOCAL SYSTEM on the DC exercising the right
+    event:
+      EventID: 4662
+      Properties: "... 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2 ..."
+      SubjectUserName: "DC01$"
+      SubjectUserSid: "S-1-5-18"
+  - name: 4662 access to a non-replication object
+    event:
+      EventID: 4662
+      Properties: "... {19195a5b-6da0-11d0-afd3-00c04fd930c9} ..."
+      SubjectUserName: "helpdesk"
+      SubjectUserSid: "S-1-5-21-1004"

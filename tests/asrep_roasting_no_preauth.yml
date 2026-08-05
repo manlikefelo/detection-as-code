@@ -1,0 +1,19 @@
+# Samples for: AS-REP Roasting - Kerberos AS-REQ With Pre-Authentication Disabled
+# Rule fires on EventID 4768 + PreAuthType 0.
+true_positives:
+  - name: AS-REQ with pre-auth disabled (roastable account)
+    event:
+      EventID: 4768
+      PreAuthType: "0"
+      TargetUserName: "noca-user"
+
+benign:
+  - name: Normal AS-REQ with pre-auth enabled
+    event:
+      EventID: 4768
+      PreAuthType: "2"
+      TargetUserName: "alice"
+  - name: A TGS event, not an AS-REQ
+    event:
+      EventID: 4769
+      PreAuthType: "0"

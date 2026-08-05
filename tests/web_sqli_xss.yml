@@ -1,0 +1,29 @@
+# Samples for: Web Attack - SQL Injection / XSS Pattern in HTTP Request
+# Rule fires on SQLi or XSS regexes over the request URI (raw or URL-encoded).
+true_positives:
+  - name: UNION SELECT SQL injection (raw)
+    event:
+      c-uri: "/vulnerabilities/sqli/?id=1' UNION SELECT user,password FROM users-- -"
+  - name: URL-encoded UNION SELECT
+    event:
+      c-uri: "/vulnerabilities/sqli/?id=1%27%20UNION%20SELECT%20user,password"
+  - name: information_schema probe
+    event:
+      c-uri: "/rest/products?q=1 AND 1=1 UNION SELECT table_name FROM information_schema.tables"
+  - name: reflected XSS payload
+    event:
+      c-uri: "/search?q=<script>alert('xss')</script>"
+  - name: onerror XSS via image tag
+    event:
+      c-uri: "/profile?bio=<img src=x onerror=alert(1)>"
+
+benign:
+  - name: Ordinary product search
+    event:
+      c-uri: "/rest/products/search?q=apple+juice"
+  - name: Static asset request
+    event:
+      c-uri: "/assets/public/images/logo.png"
+  - name: Normal login POST path
+    event:
+      c-uri: "/rest/user/login"

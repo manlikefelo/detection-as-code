@@ -1,0 +1,20 @@
+# Local draft social posts - never committed
+content/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Build artifacts produced by the convert stage
+dist/
+build/converted/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

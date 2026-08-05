@@ -1,0 +1,6 @@
+# Detection-as-Code toolchain (all free / open source)
+pysigma>=0.11
+pysigma-backend-elasticsearch>=1.1
+sigma-cli>=1.0
+pytest>=8.0
+pyyaml>=6.0

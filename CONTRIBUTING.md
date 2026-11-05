@@ -18,7 +18,7 @@ e.g. `rules/lateral-movement/psexec_service_install.yml`. It must have `title`, 
 technique tag (`attack.tXXXX`). The lint stage enforces all of this.
 
 ### 2. Add its test samples
-Create `tests/<short_name>.yml` — **the filename stem must match the rule's** — with
+Create `tests/<short_name>.yml`, **the filename stem must match the rule's**, with
 true-positive events (must alert) and benign events (must not):
 
 ```yaml
@@ -35,7 +35,7 @@ benign:
 ```
 
 **Aim your benign samples at the rule's filters.** The best FP samples are the events
-your rule *almost* fires on — a machine account, `krbtgt`, a value one character off.
+your rule *almost* fires on: a machine account, `krbtgt`, a value one character off.
 That's where detections actually break.
 
 Sample shapes the harness understands:
@@ -56,13 +56,13 @@ python tools/convert_rules.py
 ```
 
 ### 4. Open a pull request
-CI runs **lint → test → convert**. If any stage is red — a malformed rule, a
+CI runs **lint → test → convert**. If any stage is red: a malformed rule, a
 true positive that doesn't fire, a benign event that does, or a rule with no
-samples — **the PR is blocked**. Fix it and push again; merge when green.
+samples: **the PR is blocked**. Fix it and push again; merge when green.
 
 ### 5. Merge
 On merge to `main`, the deploy job compiles the ruleset and publishes it as an
-artifact (the handoff to the live SIEM — see [docs/ci-design.md](docs/ci-design.md)).
+artifact (the handoff to the live SIEM, see [docs/ci-design.md](docs/ci-design.md)).
 
 ## Checklist before you open the PR
 - [ ] Rule is under the correct `rules/<tactic>/` folder

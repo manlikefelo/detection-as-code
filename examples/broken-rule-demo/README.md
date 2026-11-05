@@ -1,12 +1,12 @@
 # Demo: watch CI block a broken rule
 
-This is the reproducible version of the money-shot screenshot — a pull request
+This is the reproducible version of the money-shot screenshot: a pull request
 rejected by the detection pipeline. Two ways a rule fails the gate; both are shown.
 
 The broken rule lives here (in `examples/`, **not** in `rules/`) so it never breaks
 `main`. To demo it, copy it into `rules/` on a branch and open a PR.
 
-## Failure A — a benign event that fires (a false positive the test catches)
+## Failure A: a benign event that fires (a false positive the test catches)
 
 `broken_kerberoast.yml` is the Kerberoasting rule with the machine-account filter
 **removed**. Its logic now fires on a normal machine-account ticket. Paired with the
@@ -17,7 +17,7 @@ FAILED tests/test_detections.py::test_benign_does_not_fire[broken_kerberoast]
   [Kerberoasting …] false positive on benign 'RC4 TGS but for a machine account'
 ```
 
-## Failure B — a rule with no test samples
+## Failure B: a rule with no test samples
 
 Drop any valid rule into `rules/` without a matching `tests/<stem>.yml` and the gate
 fails at:

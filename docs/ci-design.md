@@ -1,4 +1,4 @@
-# CI design — rules as code
+# CI design: rules as code
 
 This document explains the pipeline stages and the philosophy behind treating
 detection content the way a software team treats source code.
@@ -7,7 +7,7 @@ detection content the way a software team treats source code.
 
 A detection rule is an asset with the same failure modes as any other code: it can
 be malformed, it can stop matching what it's supposed to, and it can start matching
-things it shouldn't (false positives). Yet detections are usually authored ad hoc —
+things it shouldn't (false positives). Yet detections are usually authored ad hoc,
 pasted into a SIEM console, never tested, never reviewed, with no history of who
 changed what or why. When an alert misfires at 3 a.m., nobody can tell whether the
 rule ever worked.
@@ -20,14 +20,14 @@ software engineering:
 2. **Peer review via pull request.** A rule change is proposed, not applied. A
    teammate reviews the logic and the samples before it reaches `main`.
 3. **Test coverage.** Each rule ships with sample events proving it fires on the
-   real thing and stays quiet on look-alikes. A rule with no tests is not trusted —
+   real thing and stays quiet on look-alikes. A rule with no tests is not trusted:
    the pipeline rejects it.
 4. **A quality gate in CI.** The three checks below run automatically on every PR.
    A red check blocks the merge. Good detections get in; broken ones don't.
 
 ## The three stages
 
-### 1 · Lint — `tools/lint_rules.py`
+### 1 · Lint: `tools/lint_rules.py`
 Two layers:
 - **Spec compliance:** every rule is parsed with `pySigma`'s `SigmaCollection`. If
   pySigma can't parse it, it isn't a valid Sigma rule against the current spec, and
@@ -36,7 +36,7 @@ Two layers:
   `detection`), a valid severity `level`, at least one ATT&CK technique tag, and a
   paired samples file. These keep the content consistently reviewable.
 
-### 2 · Test — `pytest` + `tools/sigma_matcher.py`
+### 2 · Test: `pytest` + `tools/sigma_matcher.py`
 For every rule the suite asserts three things:
 - the rule has a samples file with **at least one true positive** (no tests ⇒ fail);
 - **every** true-positive sample makes the rule fire (no false negatives);
@@ -45,15 +45,15 @@ For every rule the suite asserts three things:
 Tests run against `sigma_matcher.py`, a small offline evaluator of Sigma detection
 logic (field modifiers `contains`/`endswith`/`startswith`/`re`, list-OR, the
 `… and not 1 of filter_*` idiom, and `count()` correlation). This means the gate
-needs **no live SIEM** — it runs in seconds on a stock GitHub runner. If a rule uses
+needs **no live SIEM**. It runs in seconds on a stock GitHub runner. If a rule uses
 Sigma syntax the matcher doesn't implement, the matcher raises rather than passing
 silently, so an un-evaluatable rule is never mistaken for a tested one.
 
-### 3 · Convert — `tools/convert_rules.py`
+### 3 · Convert: `tools/convert_rules.py`
 Compiles each rule to two targets, written to `build/converted/`:
-- **Lucene** (`<name>.lucene`) via pySigma's maintained Elasticsearch backend — a
+- **Lucene** (`<name>.lucene`) via pySigma's maintained Elasticsearch backend: a
   strong second signal of spec conformance.
-- **Wazuh** (`wazuh_local_rules.xml`) — my home lab's SIEM. There is no maintained
+- **Wazuh** (`wazuh_local_rules.xml`): my home lab's SIEM. There is no maintained
   pySigma Wazuh backend, so this is a deliberately simple, documented mapping of each
   rule's selection fields to a Wazuh `<rule>`, mirroring the hand-written rules
   already deployed in my detection-engineering repo. It's an approximation, not a
@@ -65,7 +65,7 @@ Compiles each rule to two targets, written to `build/converted/`:
 On merge to `main`, the **deploy** job re-runs the convert step and publishes
 `wazuh_local_rules.xml` as a build artifact. That artifact is the clean handoff point
 to a live environment. In production this same file would be pushed to the Wazuh
-manager — for example:
+manager, for example:
 
 1. CI uploads `wazuh_local_rules.xml` (done here).
 2. A deploy step copies it to `/var/ossec/etc/rules/local_rules.xml` on the manager

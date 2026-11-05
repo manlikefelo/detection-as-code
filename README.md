@@ -2,7 +2,7 @@
 
 **Detection rules managed like production software: version-controlled, unit-tested, linted against the Sigma spec, and auto-compiled to a SIEM ruleset by CI. A pull request that adds a broken rule fails the pipeline and cannot be merged.**
 
-This repo takes the Sigma detections I wrote in my [detection-engineering](https://github.com/manlikefelo/detection-engineering) project and puts them under a software-engineering pipeline: the same testing and CI discipline I use as a QA engineer, applied to detection content instead of application code. That seam, *security work with test-automation rigor behind it*, is the whole point of this repo.
+This repo takes the Sigma detections I wrote in my [detection-engineering](https://github.com/manlikefelo/detection-engineering) project and puts them under a software-engineering pipeline: the same testing and CI discipline I use as a QA engineer, applied to detection content instead of application code.
 
 > **Problem:** most detection rules live as copy-pasted YAML with no tests, no review gate, and no history, so nobody can prove a rule still fires, or that a change didn't silently break it.
 > **Approach:** treat every rule as code: a test pair per rule, a lint gate, a convert-to-SIEM step, and a CI pipeline that blocks bad rules on PR.
@@ -110,7 +110,7 @@ python tools/convert_rules.py  # stage 3 -> build/converted/
 - The attacks they detect were run in **[ad-attack-chain](https://github.com/manlikefelo/ad-attack-chain)** (P1) and **[webapp-pentest-juiceshop](https://github.com/manlikefelo/webapp-pentest-juiceshop)** (P3).
 - Part of the advanced portfolio round; see the pinned **[cybersecurity-portfolio](https://github.com/manlikefelo/cybersecurity-portfolio)** meta-repo.
 
-**New to the repo?** Start with [docs/reviewer-path.md](docs/reviewer-path.md): a 3-minute guided tour.
+**New to the repo?** Start with [docs/reviewer-path.md](docs/reviewer-path.md): a short guide to this repo.
 
 ## Constraints
 

@@ -1,6 +1,6 @@
 # Demo: watch CI block a broken rule
 
-This is the reproducible version of the money-shot screenshot: a pull request
+This reproduces the blocked pull request: a pull request
 rejected by the detection pipeline. Two ways a rule fails the gate; both are shown.
 
 The broken rule lives here (in `examples/`, **not** in `rules/`) so it never breaks

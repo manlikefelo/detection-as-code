@@ -2,7 +2,7 @@
 
 **Detection rules managed like production software: version-controlled, unit-tested, linted against the Sigma spec, and auto-compiled to a SIEM ruleset by CI. A pull request that adds a broken rule fails the pipeline and cannot be merged.**
 
-This repo takes the Sigma detections I wrote in my [detection-engineering](https://github.com/manlikefelo/detection-engineering) project and puts them under a software-engineering pipeline — the same testing and CI discipline I used for years as a QA/SDET, applied to detection content instead of application code. That seam, *security work with test-automation rigor behind it*, is the whole point of this repo.
+This repo takes the Sigma detections I wrote in my [detection-engineering](https://github.com/manlikefelo/detection-engineering) project and puts them under a software-engineering pipeline — the same testing and CI discipline I use as a QA engineer, applied to detection content instead of application code. That seam, *security work with test-automation rigor behind it*, is the whole point of this repo.
 
 > **Problem:** most detection rules live as copy-pasted YAML with no tests, no review gate, and no history — so nobody can prove a rule still fires, or that a change didn't silently break it.
 > **Approach:** treat every rule as code — a test pair per rule, a lint gate, a convert-to-SIEM step, and a CI pipeline that blocks bad rules on PR.
@@ -92,11 +92,9 @@ python tools/convert_rules.py  # stage 3 -> build/converted/
 
 ## Showcase
 
-- **A PR blocked by a failing detection test** — the single image that says "I understand quality gates." See [`screenshots/`](screenshots/) and the reproducible demo in [`examples/broken-rule-demo/`](examples/broken-rule-demo/).
+- **A PR blocked by a failing detection test** — reproduce it with the demo in [`examples/broken-rule-demo/`](examples/broken-rule-demo/).
 - **A green pipeline** turning five Sigma rules into a deployable Wazuh ruleset on merge.
 - **The test pair for one rule** — a true-positive event that *must* alert next to a benign event that *must not*, e.g. an RC4 Kerberoast ticket vs. the same ticket for a machine account (`WS01$`) that the rule correctly excludes.
-
-_Screenshots to add: `screenshots/green-pipeline.png`, `screenshots/blocked-pr.png`, `screenshots/one-test-pair.png`._
 
 ## How this fits the rest of the portfolio
 

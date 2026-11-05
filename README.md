@@ -92,9 +92,17 @@ python tools/convert_rules.py  # stage 3 -> build/converted/
 
 ## Showcase
 
-- **A PR blocked by a failing detection test** — reproduce it with the demo in [`examples/broken-rule-demo/`](examples/broken-rule-demo/).
+- **A PR blocked by a failing detection test** — [PR #1](https://github.com/manlikefelo/detection-as-code/pull/1) adds a rule with its machine-account filter removed. CI catches the false positive, and the required check blocks the merge. Reproduce it with [`examples/broken-rule-demo/`](examples/broken-rule-demo/).
+
+  ![The demo pull request with its required check failed](screenshots/blocked-pr.png)
+
 - **A green pipeline** turning five Sigma rules into a deployable Wazuh ruleset on merge.
+
+  ![A passing detections-ci run: lint, test, and convert, then deploy](screenshots/green-pipeline.png)
+
 - **The test pair for one rule** — a true-positive event that *must* alert next to a benign event that *must not*, e.g. an RC4 Kerberoast ticket vs. the same ticket for a machine account (`WS01$`) that the rule correctly excludes.
+
+  ![pytest output for the Kerberoasting rule from the CI run on main](screenshots/one-test-pair.png)
 
 ## How this fits the rest of the portfolio
 

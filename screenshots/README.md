@@ -1,13 +1,12 @@
 # Screenshots
 
-Real evidence for the README showcase. Capture these from the live GitHub Actions
-runs and your terminal (full-size windows).
+Real evidence for the README showcase.
 
-| File | What to capture |
-|------|-----------------|
-| `green-pipeline.png` | A passing `detections-ci` run — the three green stages (lint → test → convert) plus the deploy job on `main`. |
-| `blocked-pr.png` | A pull request with the broken rule from `examples/broken-rule-demo/` — the red `detections-ci` check and the "merge blocked" banner. |
-| `one-test-pair.png` | Terminal: `pytest -v` output showing the Kerberoasting rule's TP firing and benign (machine-account / krbtgt) samples staying quiet. |
+| File | What it shows |
+|------|---------------|
+| `green-pipeline.png` | A passing `detections-ci` run on `main`: lint, test, and convert, then the deploy job. |
+| `blocked-pr.png` | The Checks tab of [PR #1](https://github.com/manlikefelo/detection-as-code/pull/1), with the required `lint -> test -> convert` check failed. It was captured logged out, where GitHub doesn't show the merge box; open the PR signed in to see the block itself. |
+| `one-test-pair.png` | The Kerberoasting lines of the `pytest -v` output from the CI run on `main`, rendered as an image. |
 
-See [`examples/broken-rule-demo/`](../examples/broken-rule-demo/) for the exact steps
-to produce the blocked-PR state.
+See [`examples/broken-rule-demo/`](../examples/broken-rule-demo/) for the steps that
+produce the blocked state.

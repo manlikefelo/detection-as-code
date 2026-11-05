@@ -1,0 +1,29 @@
+# DELIBERATELY BROKEN copy of the Kerberoasting rule, for the CI-blocking demo.
+# The machine-account filter has been REMOVED, so this rule now fires on normal
+# machine-account service tickets - a false positive the test suite catches.
+# See examples/broken-rule-demo/README.md. Do NOT put this in rules/ on main.
+title: Kerberoasting - RC4 (0x17) TGS Request for an SPN Account (BROKEN DEMO)
+id: 6f9d0a2e-1c4b-4e77-9b0a-2a1e5c7d09ff
+status: experimental
+description: Broken demo variant - missing the machine-account exclusion filter.
+references:
+    - https://attack.mitre.org/techniques/T1558/003/
+author: Felix Githure
+date: 2026-08-05
+tags:
+    - attack.credential-access
+    - attack.t1558.003
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4769
+        TicketEncryptionType: '0x17'
+    filter_krbtgt:
+        ServiceName: 'krbtgt'
+    # BUG: filter_machine (ServiceName|endswith '$') was deleted here.
+    condition: selection and not 1 of filter_*
+falsepositives:
+    - This rule is intentionally broken for the demo.
+level: high
